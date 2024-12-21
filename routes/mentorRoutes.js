@@ -1,10 +1,22 @@
 const express = require('express');
-const { createProject, updateProject, deleteProject } = require('../controllers/mentorController');
+const {
+    mentorLogin,
+    getProjects,
+    addProject,
+    updateProject,
+    deleteProject,
+} = require('../controllers/mentorController');
 const { protect } = require('../middleware/authMiddleware');
+
 const router = express.Router();
 
-router.post('/projects', protect, createProject);
-router.put('/projects/:projectId', protect, updateProject);
-router.delete('/projects/:projectId', protect, deleteProject);
+// Mentor Login
+router.post('/login', mentorLogin);
+
+// Project CRUD Operations (Protected Routes)
+router.get('/projects', protect, getProjects); // View Mentor's Projects
+router.post('/projects', protect, addProject); // Add Project
+router.put('/projects/:projectId', protect, updateProject); // Update Project
+router.delete('/projects/:projectId', protect, deleteProject); // Delete Project
 
 module.exports = router;

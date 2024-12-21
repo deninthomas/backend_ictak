@@ -8,10 +8,16 @@ exports.protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            req.user = await Mentor.findById(decoded.id).select('-password');
+            // Check if the user is a mentor
+            const mentor = await Mentor.findById(decoded.id);
+            if (!mentor) {
+                return res.status(403).json({ message: 'Not authorized as mentor' });
+            }
+
+            req.user = mentor; // Attach mentor info to request
             next();
         } catch (error) {
-            res.status(401).json({ message: 'Not authorized' });
+            res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
 
